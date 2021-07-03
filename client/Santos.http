@@ -1,0 +1,28 @@
+@host = http://localhost:3333/santos
+
+GET {{host}}
+
+### Recibe santos en particular
+GET {{host}}/2
+
+###
+POST {{host}}
+Content-Type: application/json
+
+{
+	"id": 7,
+  "nombre": "Saga",
+  "constelacion": "Geminis"
+}
+
+###
+PUT {{host}}/6
+Content-Type: application/json
+
+{
+  "nombre": "Mauricio",
+  "constelacion": "Libra"
+}
+
+###
+DELETE {{host}}/6
