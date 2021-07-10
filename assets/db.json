@@ -29,6 +29,21 @@
       "id": 7,
       "nombre": "Saga",
       "constelacion": "Geminis"
+    },
+    {
+      "nombre": "Mauricio",
+      "constelacion": "Libra",
+      "id": 8
+    },
+    {
+      "nombre": "Fernanda",
+      "constelacion": "Tauro",
+      "id": 9
+    },
+    {
+      "nombre": "Aldebaran",
+      "constelacion": "Tauro",
+      "id": 10
     }
   ],
   "dioses": [

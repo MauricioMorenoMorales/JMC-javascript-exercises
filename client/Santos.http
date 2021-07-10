@@ -10,9 +10,8 @@ POST {{host}}
 Content-Type: application/json
 
 {
-	"id": 7,
-  "nombre": "Saga",
-  "constelacion": "Geminis"
+  "nombre": "Mauricio",
+  "constelacion": "Libra"
 }
 
 ###

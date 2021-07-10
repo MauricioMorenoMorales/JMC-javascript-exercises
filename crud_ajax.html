@@ -10,10 +10,12 @@
 
 <body>
 	<h1>CRUD API REST AJAX</h1>
+	<!-- El html está compuesto por dos partes el form y la tabla  dentro de los 2 articles-->
 	<section class="crud">
 		<article>
 			<h2 class="crud-title">Agregar Santo</h2>
 			<form class="crud-form">
+				<!-- El input contiene 4 inputs 2 de texto 1 boton y un hidden que determina el id cuándo se envia peticiones -->
 				<input type="text" name="nombre" placeholder="nombre" required>
 				<br>
 				<input type="text" name="constelacion" placeholder="constelacion" required>
@@ -23,6 +25,7 @@
 			</form>
 		</article>
 		<article>
+			<!-- aqui solo se muestra la tabla vacia sin información la cual se formatea con el templata -->
 			<h2>Ver Santos</h2>
 			<table class="crud-table">
 				<thead>
@@ -37,6 +40,7 @@
 			</table>
 		</article>
 	</section>
+	<!-- este template llena la tabla -->
 	<template id="crud-template">
 		<tr>
 			<td class="name"></td>
@@ -55,6 +59,7 @@
 			$template = d.getElementById('crud-template').content,
 			$fragment = d.createDocumentFragment();
 
+		// función que realiza las peticiones
 		const ajax = (options) => {
 			const { url, method, success, error, data } = options;
 			const xhr = new XMLHttpRequest();
@@ -74,11 +79,11 @@
 			xhr.send(JSON.stringify(data));
 		}
 
+		// función que llena la tabla con su respectiva informacion, es activada en un DOMContentLoad
 		const getAll = () => {
 			ajax({
 				url: "http://localhost:3333/santos",
 				success: (jsonResponse) => {
-					console.log(jsonResponse)
 					jsonResponse.forEach(element => {
 						$template.querySelector(".name").textContent = element.nombre
 						$template.querySelector(".constellation").textContent = element.constelacion
@@ -99,6 +104,32 @@
 		}
 
 		d.addEventListener("DOMContentLoaded", getAll);
+		d.addEventListener("submit", event => {
+			if (event.target === $form) {
+				event.preventDefault();
+				if (!event.target.id.value) {
+					console.log('works')
+					//Hacemos peticion post
+					ajax({
+						url: "http://localhost:3333/santos",
+						method: "POST",
+						success: (response) => location.reload(),
+						error: () => $form.insertAdjacentHTML("afterend", `<p><b>${error}</b></p>`),
+						data: {
+							nombre: event.target.nombre.value,
+							constelacion: event.target.constelacion.value,
+						}
+					});
+				} else {
+					//Hacemos peticion put
+				}
+			}
+		})
+		d.addEventListener("click", event => {
+			if (event.target.matches(".edit")) {
+
+			}
+		})
 	</script>
 </body>
 
