@@ -31,7 +31,7 @@
       "constelacion": "Geminis"
     },
     {
-      "nombre": "Mauricio",
+      "nombre": "Mü",
       "constelacion": "Libra",
       "id": 8
     },
@@ -44,6 +44,11 @@
       "nombre": "Aldebaran",
       "constelacion": "Tauro",
       "id": 10
+    },
+    {
+      "nombre": "Saga",
+      "constelacion": "Geminis",
+      "id": 12
     }
   ],
   "dioses": [
