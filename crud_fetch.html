@@ -81,6 +81,85 @@
 
 		d.addEventListener("DOMContentLoaded", getAll);
 
+		d.addEventListener("submit", async event => {
+			if (event.target === $form) {
+				event.preventDefault()
+				if (!event.target.id.value) {
+					//Create POST
+					try {
+						const options = {
+							method: "POST",
+							headers: { "Content-Type": "application/json; charset=utf-8" },
+							body: JSON.stringify({
+								nombre: event.target.nombre.value,
+								constelacion: event.target.constelacion.value
+							})
+						},
+							fetchResponse = await fetch("http://localhost:3333/santos", options),
+							jsonResponse = await fetchResponse.json();
+
+						if (!fetchResponse.ok) throw { status: fetchResponse.status, statusText: fetchResponse.statusText }
+
+						location.reload();
+					} catch (catchedError) {
+						const message = catchedError.statusText || "Ocurrio un error";
+						$form.insertAdjacentHTML("afterend", `<p><b>${catchedError}</b></p>`);
+					}
+				} else {
+					//Update PUT
+					try {
+						const options = {
+							method: "PUT",
+							headers: { "Content-Type": "application/json; charset=utf-8" },
+							body: JSON.stringify({
+								nombre: event.target.nombre.value,
+								constelacion: event.target.constelacion.value,
+							})
+						},
+							fetchResponse = await fetch(`http://localhost:3333/santos/${event.target.id.value}`, options),
+							jsonResponse = await fetchResponse.json();
+
+						if (!fetchResponse.ok) throw { status: fetchResponse.status, statusText: fetchResponse.statusText }
+
+						location.reload();
+					} catch (catchedError) {
+						const message = catchedError.statusText || "Ocurrio un error";
+						$form.insertAdjacentHTML("afterend", `<p><b>${catchedError}</b></p>`);
+						console.log(catchedError);
+					}
+				}
+			}
+		})
+
+		d.addEventListener("click", async event => {
+			if (event.target.matches(".edit")) {
+				$title.textContent = "Editar Santo";
+				$form.nombre.value = event.target.dataset.name;
+				$form.constelacion.value = event.target.dataset.constellation;
+				$form.id.value = event.target.dataset.id;
+			}
+			if (event.target.matches(".delete")) {
+				const isDelete = confirm(`Estás seguro de eliminar el id ${event.target.dataset.id}`)
+				if (isDelete) {
+					try {
+						const options = {
+							method: "DELETE",
+							headers: { "Content-Type": "application/json; charset=utf-8" }
+						},
+							fetchResponse = await fetch(`http://localhost:3333/santos/${event.target.dataset.id}`, options),
+							jsonResponse = fetchResponse.json();
+
+						if (!fetchResponse.ok) throw { status: fetchResponse.status, statusText: fetchResponse.statusText }
+
+						location.reload()
+					} catch (catchedError) {
+						$form.insertAdjacentHTML("afterend", `<p><b>${catchedError}</b></p>`);
+						console.log(catchedError);
+					}
+				}
+			}
+		})
+
 	</script>
 </body>
 
