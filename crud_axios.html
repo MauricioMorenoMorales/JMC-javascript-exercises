@@ -47,6 +47,7 @@
 			</td>
 		</tr>
 	</template>
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 	<script>
 		const d = document,
 			$table = d.querySelector('.crud-table'),
@@ -54,6 +55,33 @@
 			$title = d.querySelector('.crud-title'),
 			$template = d.getElementById('crud-template').content,
 			$fragment = d.createDocumentFragment();
+
+		const getAll = async function () {
+			try {
+				const axiosResponse = await axios.get("http://localhost:3333/santos"),
+					jsonResponse = await axiosResponse.data;
+
+					//? Cuando usas axios no necesitas hacer un !axiosResponse.ok para verificar errores
+
+				for (const element of jsonResponse) {
+					$template.querySelector(".name").textContent = element.nombre;
+					$template.querySelector(".constellation").textContent = element.constelacion;
+					$template.querySelector(".edit").dataset.id = element.id
+					$template.querySelector(".edit").dataset.name = element.nombre
+					$template.querySelector(".edit").dataset.constellation = element.constelacion
+					$template.querySelector(".delete").dataset.id = element.id
+					const $clone = d.importNode($template, true);
+					$fragment.appendChild($clone)
+				}
+				$table.querySelector("tbody").appendChild($fragment);
+
+			} catch (catchedError) {
+				const errorMessage = catchedError.statusText || "Ha ocurrido un error";
+				$table.insertAdjacentHTML("afterend", `<p><b>${catchedError}</b></p>`);
+			}
+		}
+
+		document.addEventListener("DOMContentLoaded", getAll)
 	</script>
 </body>
 
