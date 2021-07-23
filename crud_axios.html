@@ -61,7 +61,7 @@
 				const axiosResponse = await axios.get("http://localhost:3333/santos"),
 					jsonResponse = await axiosResponse.data;
 
-					//? Cuando usas axios no necesitas hacer un !axiosResponse.ok para verificar errores
+				//? Cuando usas axios no necesitas hacer un !axiosResponse.ok para verificar errores
 
 				for (const element of jsonResponse) {
 					$template.querySelector(".name").textContent = element.nombre;
@@ -81,7 +81,80 @@
 			}
 		}
 
-		document.addEventListener("DOMContentLoaded", getAll)
+		document.addEventListener("DOMContentLoaded", getAll);
+
+		document.addEventListener("submit", async event => {
+			console.log(event.target)
+			if (event.target === $form) {
+				event.preventDefault();
+				if (!event.target.id.value) {
+					//Create - POST
+					try {
+						const options = {
+							method: "POST",
+							headers: { "Content-Type": "application/json; charset=utf-8" },
+							//en axios no se llama body si no data
+							data: JSON.stringify({
+								nombre: event.target.nombre.value,
+								constelacion: event.target.constelacion.value,
+							})
+						},//El método post ya se encuentra dentro de las opciones
+							axiosResponse = await axios("http://localhost:3333/santos", options),
+							jsonResponse = await axiosResponse.data;
+
+						location.reload();
+					} catch (catchedError) {
+						const errorMessage = catchedError.statusText || "Ha ocurrido un error";
+						$table.insertAdjacentHTML("afterend", `<p><b>${catchedError}</b></p>`);
+					}
+				} else {
+					//Update - PUT
+					try {
+						const options = {
+							method: "PUT",
+							headers: { "Content-Type": "application/json; charset=utf-8" },
+							data: JSON.stringify({
+								nombre: event.target.nombre.value,
+								constelacion: event.target.constelacion.value,
+							}),
+						},
+							axiosResponse = await axios(`http://localhost:3333/santos/${event.target.id.value}`, options),
+							jsonResponse = await axiosResponse.data;
+
+						location.reload();
+					} catch (catchedError) {
+						$form.insertAdjacentHTML("afterend", `<p><b>${catchedError}</b></p>`);
+						console.log(catchedError);
+					}
+				}
+			}
+		})
+		document.addEventListener("click", async event => {
+			if (event.target.matches(".edit")) {
+				$title.textContent = "Editar Santo";
+				$form.nombre.value = event.target.dataset.name;
+				$form.constelacion.value = event.target.dataset.constellation;
+				$form.id.value = event.target.dataset.id;
+			}
+			if (event.target.matches(".delete")) {
+				const deleteConfirmation = confirm(`Estás seguro que quieres eliminar el elemento ${event.target.dataset.id}`)
+				if (deleteConfirmation) {
+					try {
+						const options = {
+							method: "DELETE",
+							headers: { "Content-Type": "application/json; charset=utf-8" }
+						},
+							axiosResponse = await axios(`http://localhost:3333/santos/${event.target.dataset.id}`, options),
+							jsonResponse = await axiosResponse.data;
+
+						location.reload();
+					} catch (catchedError) {
+						$form.insertAdjacentHTML("afterend", `<p><b>${catchedError}</b></p>`);
+						console.log(catchedError);
+					}
+				}
+			}
+		})
 	</script>
 </body>
 
