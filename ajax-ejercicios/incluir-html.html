@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Incluir html con AJAX</title>
+	<style>
+		html {
+			box-sizing: border-box;
+			font-family: sans-serif;
+			font-size: 16px;
+		}
+
+		*,
+		*:before,
+		*:after {
+			box-sizing: inherit;
+		}
+
+		body {
+			margin: 0;
+			min-height: 100vh;
+			display: flex;
+			flex-direction: column;
+		}
+
+		img {
+			max-width: 100%;
+			height: auto;
+		}
+
+		main {
+			flex-grow: 1;
+		}
+
+		.container {
+			margin-left: auto;
+			margin-right: auto;
+			max-width: 992px;
+		}
+
+		.header {
+			padding: .5rem;
+			background-color: antiquewhite;
+		}
+
+		.header-content {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		.logo img {
+			width: 3rem;
+			height: auto;
+		}
+
+		.menu {
+			display: flex;
+			justify-content: space-between;
+			font-size: 115%;
+		}
+
+		.menu a {
+			color: chocolate;
+			padding: 0 1vw;
+			transition: all .3s ease-in-out;
+		}
+
+		.menu a:hover {
+			opacity: .75;
+		}
+	</style>
+</head>
+
+<body>
+	<div data-include="./assets/header.html"></div>
+	<main class="container"></main>
+	<div data-include="./assets/footer.html"></div>
+	<script>
+		const $main = document.querySelector('main');
+
+		const getHTML = function (options) {
+			const { url, success, error } = options
+			const xhr = new XMLHttpRequest();
+
+			xhr.addEventListener("readystatechange", event => {
+				if (xhr.readyState !== 4) return;
+				if (xhr.status >= 200 && xhr.status < 300) {
+					const html = xhr.responseText;
+					success(html)
+				} else {
+					const message = xhr.statusText || "Ocurrió un error";
+					error(`Error ${xhr.status}: ${message}`)
+				}
+			})
+
+			xhr.open("GET", url);
+			// Para recibir json dentro de la peticion
+			xhr.setRequestHeader("Content-Type", "text/html; charset=utf-8");
+			xhr.send();
+		}
+
+		document.addEventListener("DOMContentLoaded", event => {
+			getHTML({
+				url: "assets/home.html",
+				success: (html) => $main.innerHTML = html,
+				error: (error) => $main.innerHTML = `<h1>${error}</h1>`
+			});
+		})
+
+		document.addEventListener("click", event => {
+			if (event.target.matches(".menu a")) {
+				event.preventDefault();
+				getHTML({
+					url: event.target.href,
+					success: (html) => $main.innerHTML = html,
+					error: (error) => $main.innerHTML = `<h1>${error}</h1>`
+				});
+			}
+		})
+	</script>
+</body>
+
+</html>
