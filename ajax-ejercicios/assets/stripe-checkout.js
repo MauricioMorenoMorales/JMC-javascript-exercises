@@ -1,7 +1,5 @@
 import STRIPE_KEYS from './stripe-keys.js';
 
-console.log(STRIPE_KEYS);
-
 const $tacos = document.getElementById('tacos'),
 	$template = document.getElementById('taco-template').content,
 	$fragment = document.createDocumentFragment();
@@ -20,25 +18,28 @@ Promise.all([
 ])
 	.then(responses => Promise.all(responses.map(response => response.json())))
 	.then(jsonResponse => {
-		console.log(jsonResponse);
 		products = jsonResponse[0].data;
 		prices = jsonResponse[1].data;
-		console.log('prices: ', prices, products);
 
 		for (const element of prices) {
 			const productData = products.filter(
 				product => product.id === element.product,
 			);
-			console.log(productData);
 
-			$template.querySelector('taco').setAttribute('data-price', element.id);
+			$template.querySelector('.taco').setAttribute('data-price', element.id);
+			$template.querySelector('img').src = productData[0].images[0];
+			$template.querySelector('img').alt = productData[0].name;
+			$template.querySelector('figcaption').innerHTML = `
+				${productData[0].name}
+				<br>
+				${element.unit_amount_decimal} ${element.currency}
+			`;
 			const clone = document.importNode($template, true);
 			$fragment.appendChild(clone);
 		}
 		$tacos.appendChild($fragment);
 	})
 	.catch(catchedError => {
-		console.log(catchedError);
 		const message =
 			catchedError.statusText ||
 			'Ocurrió un error al conectarse con la API de Stripe';
