@@ -113,7 +113,7 @@
 						url: "http://localhost:3333/santos",
 						method: "POST",
 						success: (response) => location.reload(),
-						error: () => $form.insertAdjacentHTML("afterend", `<p><b>${error}</b></p>`),
+						error: (error) => $form.insertAdjacentHTML("afterend", `<p><b>${error}</b></p>`),
 						data: {
 							nombre: event.target.nombre.value,
 							constelacion: event.target.constelacion.value,
@@ -125,7 +125,7 @@
 						url: `http://localhost:3333/santos/${event.target.id.value}`,
 						method: "PUT",
 						success: (response) => location.reload(),
-						error: () => $form.insertAdjacentHTML("afterend", `<p><b>${error}</b></p>`),
+						error: (error) => $form.insertAdjacentHTML("afterend", `<p><b>${error}</b></p>`),
 						data: {
 							nombre: event.target.nombre.value,
 							constelacion: event.target.constelacion.value,

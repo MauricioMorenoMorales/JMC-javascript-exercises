@@ -51,7 +51,6 @@ Promise.all([
 document.addEventListener('click', event => {
 	if (event.target.matches('.taco *')) {
 		const price = event.target.parentElement.getAttribute('data-price');
-
 		Stripe(STRIPE_KEYS.public)
 			.redirectToCheckout({
 				lineItems: [{ price, quantity: 1 }],
