@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Pokémons</title>
+	<style>
+		.loader {
+			display: block;
+			margin: auto;
+		}
+	</style>
+</head>
+
+<body>
+	<h1>Pokémons</h1>
+	<nav class="links"></nav>
+	<main class="grid-fluid"></main>
+	<script>
+		const $main = document.querySelector("main"),
+			$links = document.querySelector(".links");
+
+		const loadPokemons = async function (url) {
+			try {
+				$main.innerHTML = `<img src="../assets/loader.svg" class="loader" />`
+
+				const fetchResponse = await fetch(url),
+					jsonResponse = await fetchResponse.json();
+
+				let $template = "",
+					$prevLink,
+					$nextLink;
+
+				console.log(jsonResponse);
+
+				if (!fetchResponse.ok) {
+					throw {
+						status: fetchResponse.status,
+						statusText: fetchResponse.statusText
+					}
+				}
+
+				for (let i = 0; i < jsonResponse.results.length; i++) {
+					console.log(jsonResponse.results[i])
+					try {
+						const pokemonFetchResponse = await fetch(jsonResponse.results[i].url),
+							pokemonJsonResponse = await pokemonFetchResponse.json();
+
+						if (!pokemonFetchResponse.ok) {
+							throw {
+								status: pokemonFetchResponse.status,
+								statusText: pokemonFetchResponse.statusText
+							}
+						}
+						console.log(pokemonFetchResponse, pokemonJsonResponse)
+
+						$template += `
+							<figure>
+								<img src="${pokemonJsonResponse.sprites.front_default}" alt"${pokemonJsonResponse.name}"/>
+								<figcaption>${pokemonJsonResponse.name}</figcaption>
+							</figure>
+						`
+					} catch (catchedError) {
+						console.log(catchedError);
+						const message = catchedError.statusText || "Ocurrió un error."
+						$template += `
+						<figure>
+							<figcaption>Error ${catchedError.status}: ${message}</figcaption>
+						</figure>
+						`
+					}
+				}
+
+				$main.innerHTML = $template
+
+			} catch (catchedError) {
+				console.log(catchedError);
+				const message = catchedError.statusText || "Ocurrió un error."
+				$main.innerHTML = `Error ${catchedError.status}: ${message}`
+			}
+		}
+
+		document.addEventListener(
+			"DOMContentLoaded",
+			event => loadPokemons("https://pokeapi.co/api/v2/pokemon/?offset=20&limit=20")
+		)
+	</script>
+</body>
+
+</html>
