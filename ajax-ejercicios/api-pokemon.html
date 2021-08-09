@@ -7,9 +7,19 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Pokémons</title>
 	<style>
+		html {
+			text-align: center;
+		}
+
 		.loader {
 			display: block;
 			margin: auto;
+		}
+
+		.grid-fluid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+			text-align: center;
 		}
 	</style>
 </head>
@@ -22,7 +32,7 @@
 		const $main = document.querySelector("main"),
 			$links = document.querySelector(".links");
 
-		const loadPokemons = async function (url) {
+		const loadPokemons = async url => {
 			try {
 				$main.innerHTML = `<img src="../assets/loader.svg" class="loader" />`
 
@@ -33,7 +43,6 @@
 					$prevLink,
 					$nextLink;
 
-				console.log(jsonResponse);
 
 				if (!fetchResponse.ok) {
 					throw {
@@ -42,8 +51,9 @@
 					}
 				}
 
+				console.log(jsonResponse)
+
 				for (let i = 0; i < jsonResponse.results.length; i++) {
-					console.log(jsonResponse.results[i])
 					try {
 						const pokemonFetchResponse = await fetch(jsonResponse.results[i].url),
 							pokemonJsonResponse = await pokemonFetchResponse.json();
@@ -54,7 +64,6 @@
 								statusText: pokemonFetchResponse.statusText
 							}
 						}
-						console.log(pokemonFetchResponse, pokemonJsonResponse)
 
 						$template += `
 							<figure>
@@ -63,8 +72,7 @@
 							</figure>
 						`
 					} catch (catchedError) {
-						console.log(catchedError);
-						const message = catchedError.statusText || "Ocurrió un error."
+						const message = catchedError.statusText || "Ocurrió un error en el inner Catch"
 						$template += `
 						<figure>
 							<figcaption>Error ${catchedError.status}: ${message}</figcaption>
@@ -74,9 +82,11 @@
 				}
 
 				$main.innerHTML = $template
+				$prevLink = jsonResponse.previous ? `<a href="${jsonResponse.previous}" >⏮️</a>` : ""
+				$nextLink = jsonResponse.next ? `<a href="${jsonResponse.next}" >⏭️</a>` : ""
+				$links.innerHTML = $prevLink + " " + $nextLink
 
 			} catch (catchedError) {
-				console.log(catchedError);
 				const message = catchedError.statusText || "Ocurrió un error."
 				$main.innerHTML = `Error ${catchedError.status}: ${message}`
 			}
@@ -85,6 +95,14 @@
 		document.addEventListener(
 			"DOMContentLoaded",
 			event => loadPokemons("https://pokeapi.co/api/v2/pokemon/?offset=20&limit=20")
+		)
+
+		document.addEventListener("click", event => {
+			if (event.target.matches(".links a")) {
+				event.preventDefault();
+				loadPokemons(event.target.getAttribute("href"))
+			}
+		}
 		)
 	</script>
 </body>
