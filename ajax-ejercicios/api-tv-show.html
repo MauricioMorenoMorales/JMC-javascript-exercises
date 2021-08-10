@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Buscador de shows de TV</title>
+	<style>
+		.loader {
+			display: block;
+			margin: auto;
+		}
+
+		.grid-fluid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+			text-align: center;
+		}
+	</style>
+</head>
+
+<body>
+	<h1>Buscador Shows de TV</h1>
+	<input type="search" id="search" placeholder="Buscar shows de tv..." />
+	<section id="shows" class="grid-fluid"></section>
+	<template id="show-template">
+		<article class="show">
+			<h3></h3>
+			<div></div>
+			<img />
+			<a></a>
+		</article>
+	</template>
+	<script>
+		const
+			$shows = document.getElementById("shows"),
+			$template = document.getElementById("show-template").content,
+			$fragment = document.createDocumentFragment();
+
+		document.addEventListener("keypress", async event => {
+			if (event.target.matches("#search")) {
+				if (event.key === "Enter") {
+					try {
+						$shows.innerHTML = `<img class="loader" src="../assets/loader.svg" alt="cargando" />`
+
+						const
+							inputQuery = event.target.value.toLowerCase(),
+							apiEndpoint = `http://api.tvmaze.com/search/shows?q=${inputQuery}`,
+							fetchResponse = await fetch(apiEndpoint),
+							fetchParsedResponse = fetchResponse.json();
+
+						console.log(apiEndpoint, fetchResponse, fetchParsedResponse)
+
+						if (!fetchResponse.ok) {
+							throw { status: fetchRseponse.status, statusText: fetchRseponse.statusText }
+						}
+
+					} catch (catchedError) {
+						const message = catchedError.statusText || "Ocurrió un error."
+						$shows.innerHTML = `Error ${catchedError.status}: ${message}`
+					}
+				}
+			}
+		});
+
+
+	</script>
+</body>
+
+</html>
