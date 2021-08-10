@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Buscador de Canciones</title>
+	<style>
+		html {
+			font-family: sans-serif;
+		}
+
+		img {
+			max-width: 100%;
+			height: auto;
+		}
+
+		main {
+			display: flex;
+			flex-direction: column-reverse;
+		}
+
+		.loader {
+			display: none;
+			margin: auto;
+		}
+
+		@media screen and (min-width: 800px) {
+			main {
+				flex-direction: row;
+			}
+
+			main>* {
+				padding: 1rem;
+				flex-basis: 50%;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<h1>Buscador de Canciones</h1>
+	<form id="song-search">
+		<input type="text" name="artist" placeholder="Nombre de el primer Artista" required>
+		<br />
+		<input type="text" name="second" placeholder="Nombre de el segundo Artista" required>
+		<br />
+		<input type="submit">
+	</form>
+	<img class="loader" src="../assets/loader.svg" alt="Cargando...">
+	<aside class="error"></aside>
+	<main>
+		<article class="artist">
+		</article>
+		<article class="second">
+		</article>
+	</main>
+	<script>
+		const
+			$form = document.getElementById("song-search"),
+			$loader = document.querySelector(".loader"),
+			$error = document.querySelector(".error"),
+			$main = document.querySelector("main"),
+			$artist = document.querySelector(".artist"),
+			$second = document.querySelector(".second");
+
+		$form.addEventListener("submit", async event => {
+			event.preventDefault();
+
+			try {
+				$loader.style.display = "block";
+
+				const
+					artist = event.target.artist.value.toLowerCase(),
+					second = event.target.second.value.toLowerCase(),
+					artistApiEndpoint = `https://theaudiodb.com/api/v1/json/1/search.php?s=${artist}`,
+					secondApiEndpoint = `https://theaudiodb.com/api/v1/json/1/search.php?s=${second}`,
+					artistFetch = fetch(artistApiEndpoint),
+					secondFetch = fetch(secondApiEndpoint);
+
+					let
+				$artistTemplate = "",
+					$secondTemplate = "";
+			} catch (catchedError) {
+				console.log(catchedError)
+				$loader.style.display = "none";
+				const message = catchedError.statusText || "Ocurrió un error";
+				$error.innerHTML = `<p>Error ${catchedError.status}: ${message}</p>`
+			}
+		})
+	</script>
+</body>
+
+</html>
