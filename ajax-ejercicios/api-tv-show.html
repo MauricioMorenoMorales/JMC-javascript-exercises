@@ -15,7 +15,11 @@
 		.grid-fluid {
 			display: grid;
 			grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-			text-align: center;
+		}
+
+		.show {
+			display: flex;
+			flex-direction: column;
 		}
 	</style>
 </head>
@@ -48,20 +52,46 @@
 							inputQuery = event.target.value.toLowerCase(),
 							apiEndpoint = `http://api.tvmaze.com/search/shows?q=${inputQuery}`,
 							fetchResponse = await fetch(apiEndpoint),
-							fetchParsedResponse = fetchResponse.json();
+							fetchParsedResponse = await fetchResponse.json();
 
-						console.log(apiEndpoint, fetchResponse, fetchParsedResponse)
+						console.log(apiEndpoint, fetchParsedResponse)
 
 						if (!fetchResponse.ok) {
-							throw { status: fetchRseponse.status, statusText: fetchRseponse.statusText }
+							throw { status: fetchRseponse.status, statusText: fetchRseponse.statusText };
+						};
+						if (fetchParsedResponse.length === 0) {
+							throw {
+								status: 404,
+								statusText: `No existen resultados de shows para el criterio de busqueda <b>${inputQuery}</b>`
+							};
+						} else {
+							for (const element of fetchParsedResponse) {
+								$template.querySelector("h3").textContent = element.show.name;
+								$template.querySelector("div").innerHTML = element.show.summary || "Sin descripción.";
+								$template.querySelector("img").src = element.show.image
+									? element.show.image.medium
+									: "http://static.tvmaze.com/images/no-img/no-img-portrait-text.png";
+								$template.querySelector("img").alt = element.show.name;
+								$template.querySelector("img").title = element.show.name;
+								$template.querySelector("img").style.maxWidth = "100%";
+								$template.querySelector("img").style.Width = "100%";
+								$template.querySelector("a").href = element.show.url || "#";
+								$template.querySelector("a").target = element.show.url ? "_blank" : "_self";
+								$template.querySelector("a").textContent = element.show.url && "Ver Más";
+
+								let $clone = document.importNode($template, true);
+								$fragment.appendChild($clone);
+							}
+							$shows.innerHTML = "";
+							$shows.appendChild($fragment)
 						}
 
 					} catch (catchedError) {
-						const message = catchedError.statusText || "Ocurrió un error."
-						$shows.innerHTML = `Error ${catchedError.status}: ${message}`
-					}
-				}
-			}
+						const message = catchedError.statusText || "Ocurrió un error.";
+						$shows.innerHTML = `<p>Error ${catchedError.status}: ${message}</p>`;
+					};
+				};
+			};
 		});
 
 
