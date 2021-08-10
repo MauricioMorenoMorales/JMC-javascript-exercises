@@ -76,11 +76,17 @@
 					second = event.target.second.value.toLowerCase(),
 					artistApiEndpoint = `https://theaudiodb.com/api/v1/json/1/search.php?s=${artist}`,
 					secondApiEndpoint = `https://theaudiodb.com/api/v1/json/1/search.php?s=${second}`,
-					artistFetch = fetch(artistApiEndpoint),
-					secondFetch = fetch(secondApiEndpoint);
+					artistFetch = await fetch(artistApiEndpoint),
+					secondFetch = await fetch(secondApiEndpoint),
+					[artistFetchResponse, secondFetchResponse] = await Promise.all([artistFetch, secondFetch]),
+					artistData = await artistFetchResponse.json(),
+					secondData = await secondFetchResponse.json();
 
-					let
-				$artistTemplate = "",
+				console.log(artistFetchResponse, secondFetchResponse)
+				console.log(artistData, secondData)
+
+				let
+					$artistTemplate = "",
 					$secondTemplate = "";
 			} catch (catchedError) {
 				console.log(catchedError)
