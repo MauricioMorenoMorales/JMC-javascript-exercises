@@ -65,6 +65,10 @@
 			$artist = document.querySelector(".artist"),
 			$second = document.querySelector(".second");
 
+		let
+			$artistTemplate = "",
+			$secondTemplate = "";
+
 		$form.addEventListener("submit", async event => {
 			event.preventDefault();
 
@@ -74,20 +78,49 @@
 				const
 					artist = event.target.artist.value.toLowerCase(),
 					second = event.target.second.value.toLowerCase(),
-					artistApiEndpoint = `https://theaudiodb.com/api/v1/json/1/search.php?s=${artist}`,
-					secondApiEndpoint = `https://theaudiodb.com/api/v1/json/1/search.php?s=${second}`,
+					artistApiEndpoint = `https://www.theaudiodb.com/api/v1/json/1/search.php?s=${artist}`.replace(' ', '%20'),
+					secondApiEndpoint = `https://www.theaudiodb.com/api/v1/json/1/search.php?s=${second}`.replace(' ', '%20'),
 					artistFetch = await fetch(artistApiEndpoint),
 					secondFetch = await fetch(secondApiEndpoint),
 					[artistFetchResponse, secondFetchResponse] = await Promise.all([artistFetch, secondFetch]),
 					artistData = await artistFetchResponse.json(),
 					secondData = await secondFetchResponse.json();
 
-				console.log(artistFetchResponse, secondFetchResponse)
-				console.log(artistData, secondData)
+				if (artistData.artists === null) {
+					$artistTemplate = `<h2>No existe el intérprete <mark>${artist}</mark></h2>`
+				} else {
+					$artist.innerHTML = ""
+					const artistInformation = artistData.artists[0];
+					$artistTemplate = `
+						<h2>${artistInformation.strArtist}</h2>
+						<img src="${artistInformation.strArtistThumb}" alt="${artistInformation.strArtist}"/>
+						<p>${artistInformation.intBornYear} - ${artistInformation.intDiedYear || "Present"}</p>
+						<p>${artistInformation.strCountry}</p>
+						<p>${artistInformation.strGenre} - ${artistInformation.strStyle}</p>
+						<a href="://${artistInformation.strWebsite}" target="_blank">Sitio Web</a>
+						<p>${artistInformation.strBiographyEN}</p>
+					`
+				}
+				if (secondData.artists === null) {
+					$secondTemplate = `<h2>No existe el intérprete <mark>${artist}</mark></h2>`
+				} else {
+					$second.innerHTML = ""
+					const artistInformation = secondData.artists[0];
+					$secondTemplate = `
+						<h2>${artistInformation.strArtist}</h2>
+						<img src="${artistInformation.strArtistThumb}" alt="${artistInformation.strArtist}"/>
+						<p>${artistInformation.intBornYear} - ${artistInformation.intDiedYear || "Present"}</p>
+						<p>${artistInformation.strCountry}</p>
+						<p>${artistInformation.strGenre} - ${artistInformation.strStyle}</p>
+						<a href="://${artistInformation.strWebsite}" target="_blank">Sitio Web</a>
+						<p>${artistInformation.strBiographyEN}</p>
+					`
+				}
 
-				let
-					$artistTemplate = "",
-					$secondTemplate = "";
+				$loader.style.display = "none";
+				$artist.innerHTML = $artistTemplate
+				$second.innerHTML = $secondTemplate
+
 			} catch (catchedError) {
 				console.log(catchedError)
 				$loader.style.display = "none";
