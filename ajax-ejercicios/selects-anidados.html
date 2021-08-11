@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Selects Anidados</title>
+</head>
+
+<body>
+	<h1>Selects Anidados</h1>
+	<h2>México</h2>
+	<label for="select-primary">Estados</label>
+	<select name="primary" id="select-primary">
+		<option value="">Elige un estado</option>
+	</select>
+	<p></p>
+	<label for="select-secondary">Estados</label>
+	<select name="secondary" id="select-secondary">
+		<option value="">Elige un municipio</option>
+	</select>
+	<p></p>
+	<!--! esto se tiene que terminar revisando después
+	genera un error de cors que no he podido resolver -->
+	<script>
+		const
+			$selectPrimary = document.getElementById("select-primary"),
+			$selectSecondary = document.getElementById("select-secondary"),
+			token = 'd81a7ac7-976d-4e1e-b7d3-b1979d791b6c'; // AL final de todos los url agrega ?token=${token}
+
+		const loadStates = function () {
+			fetch(`https://api-sepomex.hckdrk.mx/query/get_estados?token=${token}`)
+				.then(response => response.ok ? response.json() : Promise.reject(response))
+				.then(console.log)
+				.catch(catchedError => {
+					console.log(catchedError)
+					const message = catchedError.statusText || "Ocurrió un error";
+					$selectPrimary.nextElementSibling.innerHTML = `Error ${catchedError.status}: ${message}`
+				})
+		}
+
+		const loadTowns = state => {
+
+		}
+
+		document.addEventListener("DOMContentLoaded", event => loadStates())
+
+		$selectPrimary.addEventListener("change", event => loadTowns(event.target.value))
+	</script>
+
+</body>
+
+</html>
