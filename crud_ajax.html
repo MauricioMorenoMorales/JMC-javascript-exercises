@@ -52,7 +52,8 @@
 		</tr>
 	</template>
 	<script>
-		const d = document,
+		const
+			d = document,
 			$table = d.querySelector('.crud-table'),
 			$form = d.querySelector('.crud-form'),
 			$title = d.querySelector('.crud-title'),
@@ -102,7 +103,7 @@
 				},
 			})
 		}
-		// Aqui se encuentran los eventos de el DOM
+		// Aqui se encuentran los eventos del DOM
 		d.addEventListener("DOMContentLoaded", getAll);
 		d.addEventListener("submit", event => {
 			if (event.target === $form) {
