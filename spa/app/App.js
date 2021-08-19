@@ -1,20 +1,16 @@
 import api from './helpers/wp_api.js';
 import { ajax } from './helpers/ajax.js';
+import { Title } from './components/Title.js';
+import { Loader } from './components/Loader.js';
 
 export const App = function () {
-	document.getElementById(
-		'root',
-	).innerHTML = `<h1>Bienvenidos a mi primer SPA con Vanilla.js</h1>`;
+	const $root = document.getElementById('root');
+
+	$root.appendChild(Title());
+	$root.appendChild(Loader());
 
 	ajax({
-		url: api.POSTS,
-		successCallback: posts => {
-			console.log(posts);
-		},
+		url: 'no-valida',
+		successCallback: () => {},
 	});
-	ajax({
-		url: api.CATEGORIES,
-		successCallback: posts => console.log(posts),
-	});
-	console.log(api);
 };
