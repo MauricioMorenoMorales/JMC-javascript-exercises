@@ -6,6 +6,6 @@ import { Header } from './components/Header.js';
 export const App = function () {
 	const $root = document.getElementById('root');
 
-	$root.appendChild(Loader());
 	$root.appendChild(Header());
+	$root.appendChild(Loader());
 };
