@@ -2,29 +2,30 @@ import { ajax } from '../helpers/ajax.js';
 import api from '../helpers/wp_api.js';
 import { PostCard } from './PostCard.js';
 
-export const Router = function () {
+export const Router = async function () {
 	const { hash } = location;
 
-	const $posts = document.getElementById('posts');
+	const $main = document.getElementById('main');
 
-	$posts.innerHTML = null;
+	$main.innerHTML = null;
 
 	if (!hash || hash === '#/') {
-		ajax({
+		await ajax({
 			url: api.POSTS,
-			successCallback: posts => {
-				console.log(posts);
+			successCallback: main => {
+				console.log(main);
 				let html = '';
-				posts.forEach(post => (html += PostCard(post)));
+				main.forEach(post => (html += PostCard(post)));
 				document.querySelector('.loader').style.display = 'none';
-				$posts.innerHTML = html;
+				$main.innerHTML = html;
 			},
 		});
 	} else if (hash.includes('#/search')) {
-		$posts.innerHTML = `<h2>Sección del Buscador</h2>`;
+		$main.innerHTML = `<h2>Sección del Buscador</h2>`;
 	} else if (hash === '#/contacto') {
-		$posts.innerHTML = `<h2>Sección de Contacto</h2>`;
+		$main.innerHTML = `<h2>Sección de Contacto</h2>`;
 	} else {
-		$posts.innerHTML = `<h2>Aquí cargará el contenido de el Post previamente seleccionado</h2>`;
+		$main.innerHTML = `<h2>Aquí cargará el contenido de el Post previamente seleccionado</h2>`;
 	}
+	document.querySelector('.loader').style.display = 'none';
 };

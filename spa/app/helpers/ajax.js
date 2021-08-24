@@ -1,7 +1,7 @@
-export const ajax = props => {
+export const ajax = async props => {
 	let { url, successCallback } = props;
 
-	fetch(url)
+	await fetch(url)
 		.then(response =>
 			response.ok ? response.json() : Promise.reject(response),
 		)
@@ -11,7 +11,7 @@ export const ajax = props => {
 				catchedError.statusText ||
 				'Ocurrió un error dentro de el fetch en el archivo ajax.js';
 
-			document.getElementById('posts').innerHTML = `
+			document.getElementById('main').innerHTML = `
 				<div class="error">
 					<p>Error ${catchedError.status}: ${message}</p>
 				</div>
