@@ -1,10 +1,9 @@
-export const Post = props => `
+export const Post = ({ title, content, date }) => `
 	<section class="post-page">
 		<aside>
-			<h2>Titulo de el Post</h2>
-			<time datetime="2020-11-12">12/11/2020</time>
+			<h2>${title.rendered}</h2>
+			<time datetime="${date}">${new Date(date).toLocaleString()}</time>
 		</aside>
 		<hr/>
-		<article>Contenido de el Post</article>
-	</section>
-`;
+		<article>${content.rendered}</article>
+	</section>`;
